@@ -177,11 +177,11 @@ class LaneLines:
         miny = img.shape[0] // 3
         if len(lefty):
             maxy = max(maxy, np.max(lefty))
-            miny = min(miny, np.min(lefty))
+            # miny = min(miny, np.min(lefty))
 
         if len(righty):
             maxy = max(maxy, np.max(righty))
-            miny = min(miny, np.min(righty))
+            # miny = min(miny, np.min(righty))
 
         ploty = np.linspace(miny, maxy, img.shape[0])
 
