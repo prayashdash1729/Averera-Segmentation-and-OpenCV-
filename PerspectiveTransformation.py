@@ -12,14 +12,6 @@ class PerspectiveTransformation:
     """
     def __init__(self):
         """Init PerspectiveTransformation."""
-        # self.src = np.float32([(550, 460),     # top-left
-        #                        (150, 720),     # bottom-left
-        #                        (1200, 720),    # bottom-right
-        #                        (770, 460)])    # top-right
-        # self.dst = np.float32([(100, 0),
-        #                        (100, 720),
-        #                        (1100, 720),
-        #                        (1100, 0)])
 
         self.src = np.float32([(1150, 1450),     # top-left
                                (250, 2160),     # bottom-left

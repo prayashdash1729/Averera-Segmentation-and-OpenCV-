@@ -28,24 +28,7 @@ class Thresholding:
         Returns:
             binary (np.array): A binary image represent all positions of relavant pixels.
         """
-        # hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
-        # hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-        # h_channel = hls[:,:,0]
-        # l_channel = hls[:,:,1]
-        # s_channel = hls[:,:,2]
-        # v_channel = hsv[:,:,2]
-
-        # right_lane = threshold_rel(l_channel, 0.8, 1.0)
-        # right_lane[:,:750] = 0
-
-        # left_lane = threshold_abs(h_channel, 20, 30)
-        # left_lane &= threshold_rel(v_channel, 0.7, 1.0)
-        # left_lane[:,550:] = 0
-
-        # # img2 = left_lane | right_lane
-        # img2 = right_lane
-
-        # return img2
+        
         hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
         hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
         h_channel = hls[:,:,0]

@@ -33,12 +33,12 @@ class LaneLines:
         self.nonzeroy = None
         self.clear_visibility = True
         self.dir = []
-        self.left_curve_img = mpimg.imread('left_turn.png')
-        self.right_curve_img = mpimg.imread('right_turn.png')
-        self.keep_straight_img = mpimg.imread('straight.png')
-        self.left_curve_img = cv2.normalize(src=self.left_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-        self.right_curve_img = cv2.normalize(src=self.right_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-        self.keep_straight_img = cv2.normalize(src=self.keep_straight_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+        # self.left_curve_img = mpimg.imread('left_turn.png')
+        # self.right_curve_img = mpimg.imread('right_turn.png')
+        # self.keep_straight_img = mpimg.imread('straight.png')
+        # self.left_curve_img = cv2.normalize(src=self.left_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+        # self.right_curve_img = cv2.normalize(src=self.right_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+        # self.keep_straight_img = cv2.normalize(src=self.keep_straight_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
 
         # HYPERPARAMETERS
         # Number of sliding windows
@@ -179,11 +179,9 @@ class LaneLines:
 
         if len(lefty):
             maxy = max(maxy, np.max(lefty))
-            # miny = min(miny, np.min(lefty))
 
         if len(righty):
             maxy = max(maxy, np.max(righty))
-            # miny = min(miny, np.min(righty))
 
         ploty = np.linspace(miny, maxy, img.shape[0])
 
@@ -198,8 +196,6 @@ class LaneLines:
             r = int(right_fitx[i])
             y = int(y)
             cv2.line(out_img, (l, y), (r, y), (0, 255, 0))
-
-        # lR, rR, pos = self.measure_curvature()
 
         return out_img
 
@@ -253,15 +249,6 @@ class LaneLines:
         # if direction in 'LR':
         #     cv2.putText(out_img, curvature_msg, org=(10, 280), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 255, 255), thickness=2)
 
-        # cv2.putText(
-        #     out_img,
-        #     "Good Lane Keeping",
-        #     org=(10, 400),
-        #     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-        #     fontScale=1.2,
-        #     color=(0, 255, 0),
-        #     thickness=2)
-
         W = 1300
         H = 201
         widget = np.copy(out_img[:H, :W])
@@ -294,11 +281,6 @@ class LaneLines:
         # Compute R_curve (radius of curvature)
         # left_curveR =  ((1 + (2*left_fit[0] *y_eval + left_fit[1])**2)**1.5)  / np.absolute(2*left_fit[0])
         # right_curveR = ((1 + (2*right_fit[0]*y_eval + right_fit[1])**2)**1.5) / np.absolute(2*right_fit[0])
-
-        # xl = np.dot(self.left_fit, [700**2, 700, 1])
-        # xr = np.dot(self.right_fit, [700**2, 700, 1])
-        # pos = (1280//2 - (xl+xr)//2)*xm
-        # return left_curveR, right_curveR, pos
 
         xm = 2/(self.rightx_base - self.leftx_base)
 
