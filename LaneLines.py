@@ -174,7 +174,9 @@ class LaneLines:
 
         # Generate x and y values for plotting
         maxy = img.shape[0] - 1
-        miny = img.shape[0] // 3
+        # miny = img.shape[0] // 3
+        miny = 0
+
         if len(lefty):
             maxy = max(maxy, np.max(lefty))
             # miny = min(miny, np.min(lefty))

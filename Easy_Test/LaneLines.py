@@ -33,20 +33,20 @@ class LaneLines:
         self.nonzeroy = None
         self.clear_visibility = True
         self.dir = []
-        self.left_curve_img = mpimg.imread('left_turn.png')
-        self.right_curve_img = mpimg.imread('right_turn.png')
-        self.keep_straight_img = mpimg.imread('straight.png')
-        self.left_curve_img = cv2.normalize(src=self.left_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-        self.right_curve_img = cv2.normalize(src=self.right_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-        self.keep_straight_img = cv2.normalize(src=self.keep_straight_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+        # self.left_curve_img = mpimg.imread('left_turn.png')
+        # self.right_curve_img = mpimg.imread('right_turn.png')
+        # self.keep_straight_img = mpimg.imread('straight.png')
+        # self.left_curve_img = cv2.normalize(src=self.left_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+        # self.right_curve_img = cv2.normalize(src=self.right_curve_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+        # self.keep_straight_img = cv2.normalize(src=self.keep_straight_img, dst=None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
 
         # HYPERPARAMETERS
         # Number of sliding windows
         self.nwindows = 9
         # Width of the the windows +/- margin
-        self.margin = 300
+        self.margin = 200
         # Mininum number of pixels found to recenter window
-        self.minpix = 450
+        self.minpix = 50
 
     def forward(self, img):
         """Take a image and detect lane lines.
@@ -167,14 +167,14 @@ class LaneLines:
 
         leftx, lefty, rightx, righty, out_img = self.find_lane_pixels(img)
 
-        if len(lefty) > 1500:
+        if len(lefty) > 0:
             self.left_fit = np.polyfit(lefty, leftx, 2)
-        if len(righty) > 1500:
+        if len(righty) > 0:
             self.right_fit = np.polyfit(righty, rightx, 2)
 
         # Generate x and y values for plotting
         maxy = img.shape[0] - 1
-        miny = img.shape[0] // 3
+        miny = 0
         if len(lefty):
             maxy = max(maxy, np.max(lefty))
             # miny = min(miny, np.min(lefty))
@@ -260,8 +260,8 @@ class LaneLines:
         #     color=(0, 255, 0),
         #     thickness=2)
 
-        W = 1300
-        H = 201
+        W = 500
+        H = 70
         widget = np.copy(out_img[:H, :W])
         widget //= 2
         widget[0,:] = [0, 0, 255]
@@ -273,11 +273,11 @@ class LaneLines:
         cv2.putText(
             out_img,
             "Vehicle is {:.2f}m away from center".format(pos),
-            org=(50, 110),
+            org=(20, 40),
             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=2,
+            fontScale=0.8,
             color=(255, 255, 255),
-            thickness=5)
+            thickness=2)
 
         return out_img
 
@@ -302,5 +302,5 @@ class LaneLines:
 
         xl = np.copy(self.leftx_base)
         xr = np.copy(self.rightx_base)
-        pos = (3840//2 - (xl+xr)//2)*xm
+        pos = (1280//2 - (xl+xr)//2)*xm
         return pos

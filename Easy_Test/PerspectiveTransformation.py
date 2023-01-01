@@ -1,5 +1,5 @@
-import cv2
 import numpy as np
+import cv2
 
 class PerspectiveTransformation:
     """ This a class for transforming image between front view and top view
@@ -12,28 +12,20 @@ class PerspectiveTransformation:
     """
     def __init__(self):
         """Init PerspectiveTransformation."""
-        # self.src = np.float32([(550, 460),     # top-left
-        #                        (150, 720),     # bottom-left
-        #                        (1200, 720),    # bottom-right
-        #                        (770, 460)])    # top-right
-        # self.dst = np.float32([(100, 0),
-        #                        (100, 720),
-        #                        (1100, 720),
-        #                        (1100, 0)])
 
-        self.src = np.float32([(1150, 1450),     # top-left
-                               (250, 2160),     # bottom-left
-                               (3300, 2160),    # bottom-right
-                               (2350, 1450)])    # top-right
-        self.dst = np.float32([(250, 0),
-                               (250, 2160),
-                               (3300, 2160),
-                               (3300, 0)])
+        self.src = np.float32([(500, 550),     # top-left
+                               (150, 700),     # bottom-left
+                               (930, 700),    # bottom-right
+                               (700, 550)])    # top-right
+        self.dst = np.float32([(150, 0),
+                               (150, 720),
+                               (930, 720),
+                               (930, 0)])
 
         self.M = cv2.getPerspectiveTransform(self.src, self.dst)
         self.M_inv = cv2.getPerspectiveTransform(self.dst, self.src)
 
-    def forward(self, img, img_size=(3840, 2160), flags=cv2.INTER_LINEAR):
+    def forward(self, img, img_size=(1280, 720), flags=cv2.INTER_LINEAR):
         """ Take a front view image and transform to top view
 
         Parameters:
@@ -46,7 +38,7 @@ class PerspectiveTransformation:
         """
         return cv2.warpPerspective(img, self.M, img_size, flags=flags)
 
-    def backward(self, img, img_size=(3840, 2160), flags=cv2.INTER_LINEAR):
+    def backward(self, img, img_size=(1280, 720), flags=cv2.INTER_LINEAR):
         """ Take a top view image and transform it to front view
 
         Parameters:
