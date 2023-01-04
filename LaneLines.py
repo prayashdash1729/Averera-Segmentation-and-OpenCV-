@@ -189,6 +189,7 @@ class LaneLines:
         # x' = a*y^2 + b*y + c
         left_fitx = self.left_fit[0]*ploty**2 + self.left_fit[1]*ploty + self.left_fit[2]
         right_fitx = self.right_fit[0]*ploty**2 + self.right_fit[1]*ploty + self.right_fit[2]
+        mid_fitx = (left_fitx + right_fitx)/2
 
         # Visualization
         for i, y in enumerate(ploty):
@@ -196,6 +197,17 @@ class LaneLines:
             r = int(right_fitx[i])
             y = int(y)
             cv2.line(out_img, (l, y), (r, y), (0, 255, 0))
+
+        # drawing the middle line of lane
+        for i in range(len(ploty)-1):
+            y1 = int(ploty[i])
+            x1 = int(mid_fitx[i])
+            y2 = int(ploty[i+1])
+            x2 = int(mid_fitx[i+1])
+            cv2.line(out_img, (x1, y1), (x2, y2), (0, 0, 255), 15)
+
+        # drawing the center of the vehicle
+        cv2.line(out_img, (1920, 2160), (1920, 2000), (255,0,0), 10)
 
         return out_img
 
