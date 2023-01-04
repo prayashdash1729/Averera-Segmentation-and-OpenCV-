@@ -124,6 +124,8 @@ class LaneLines:
         midpoint = histogram.shape[0]//2
         self.leftx_base = np.argmax(histogram[:midpoint])
         self.rightx_base = np.argmax(histogram[midpoint:]) + midpoint
+        if self.rightx_base == midpoint:
+            self.rightx_base = np.copy(self.leftx_base + 400)
 
         # Current position to be update later for each window in nwindows
         leftx_current = self.leftx_base
