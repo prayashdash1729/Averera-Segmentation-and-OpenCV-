@@ -3,13 +3,15 @@ import cv2
 import os
 
 # Read the video from specified path
-cam = cv2.VideoCapture("lane_juniors.mp4")
+path = "new_road3.mp4"
+cam = cv2.VideoCapture("input_videos/" + path)
+dir = path.strip('.mp4') + '_frames'
 
 try:
     
     # creating a folder named data
-    if not os.path.exists('lame_junior_frames'):
-        os.makedirs('lame_junior_frames')
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
 # if not created then raise error
 except OSError:
@@ -25,8 +27,8 @@ while(True):
 
     if ret:
         # if video is still left continue creating images
-        if currentframe%10 == 0:
-            name = './lame_junior_frames/lane_juniors_frame' + str(currentframe) + '.jpg'
+        if currentframe%100 == 0:
+            name = "./" + dir + "/" + path.strip('.mp4') + "_" + str(currentframe) + '.jpg'
             print ('Creating...' + name)
             # writing the extracted images
             cv2.imwrite(name, frame)
