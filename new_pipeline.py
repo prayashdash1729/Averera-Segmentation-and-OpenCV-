@@ -16,23 +16,27 @@ class PerspectiveTransformation:
     """
     def __init__(self):
         """Init PerspectiveTransformation."""
-        height, width = (1080, 1920)
+        # height, width = (1080, 1920)
 
-        region_of_interest = np.array([
-        [(400, 500), (0, 900), (width, 900), (1600, 500)]
-        ])
+        # region_of_interest = np.array([
+        # [(400, 500), (0, 900), (width, 900), (1600, 500)]
+        # ])
         
-        self.src = np.float32([(400, 500), 
-                               (0, 900), 
-                               (width, 900), 
-                               (1600, 500)])
-        self.dst = np.float32([(100, 0),
-                               (100, height),
-                               (width-100, height),
-                               (width-100, 0)])
+        # region_of_interest = np.array([
+        # [(200, 500), (0, height), (width, height), (1800, 500)]
+        # ])
 
-        self.M = cv2.getPerspectiveTransform(self.src, self.dst)
-        self.M_inv = cv2.getPerspectiveTransform(self.dst, self.src)
+        # self.src = np.float32([(100, 300), 
+        #                        (0, height), 
+        #                        (width, height), 
+        #                        (width-100, 300)])
+        # self.dst = np.float32([(100, 0),
+        #                        (100, height),
+        #                        (width-100, height),
+        #                        (width-100, 0)])
+
+        # self.M = cv2.getPerspectiveTransform(self.src, self.dst)
+        # self.M_inv = cv2.getPerspectiveTransform(self.dst, self.src)
 
     def forward(self, img, img_size=(1920, 1080), flags=cv2.INTER_LINEAR):
         """ Take a front view image and transform to top view
@@ -45,6 +49,20 @@ class PerspectiveTransformation:
         Returns:
             Image (np.array): Top view image
         """
+        height, width, ch_ = img.shape
+
+        self.src = np.float32([(width//3,7*height//12), 
+                               (0, height-50), 
+                               (width, height-50), 
+                               (2*width//3, 7*height//12)])
+        self.dst = np.float32([(50, 0),
+                               (50, height),
+                               (width-50, height),
+                               (width-50, 0)])
+
+        self.M = cv2.getPerspectiveTransform(self.src, self.dst)
+        self.M_inv = cv2.getPerspectiveTransform(self.dst, self.src)
+        img_size = (width, height)
         return cv2.warpPerspective(img, self.M, img_size, flags=flags)
 
     def backward(self, img, img_size=(1920, 1080), flags=cv2.INTER_LINEAR):
@@ -58,6 +76,8 @@ class PerspectiveTransformation:
         Returns:
             Image (np.array): Front view image
         """
+        height, width, ch_ = img.shape
+        img_size = (width, height)
         return cv2.warpPerspective(img, self.M_inv, img_size, flags=flags)
 
 def threshold_rel(img, lo, hi):
@@ -96,8 +116,8 @@ class Thresholding:
         s_channel = hls[:,:,2]
         v_channel = hsv[:,:,2]
 
-        lanes = threshold_rel(v_channel, 0.83, 1.0)
-        lanes[:,600:1300]=0
+        lanes = threshold_rel(v_channel, 0.85, 1.0)
+        # lanes[:,600:1300]=0
         return lanes
     
 
@@ -138,9 +158,10 @@ class LaneLines:
         # Number of sliding windows
         self.nwindows = 9
         # Width of the the windows +/- margin
-        self.margin = 300
-        # Mininum number of pixels found to recenter window
-        self.minpix = 450
+        # if self.img is not None:
+        #     self.margin = self.img.shape[1]//8
+        #     # Mininum number of pixels found to recenter window
+        #     self.minpix = self.img.shape[1]//100
 
     def forward(self, img):
         """Take a image and detect lane lines.
@@ -209,6 +230,9 @@ class LaneLines:
             righty (np.array): y coordinates of right lane pixels
             out_img (np.array): A RGB image that use to display result later on.
         """
+
+        self.minpix = img.shape[1]//100
+        self.margin = img.shape[1]//8
         assert(len(img.shape) == 2)
 
         # Create an output image to draw on and visualize the result
@@ -269,8 +293,8 @@ class LaneLines:
 
         # Generate x and y values for plotting
         maxy = img.shape[0] - 1
-        miny = img.shape[0] // 5
-        # miny = 0
+        # miny = img.shape[0] // 5
+        miny = 0
 
         # if len(lefty):
         #     maxy = max(maxy, np.max(lefty))
@@ -293,7 +317,7 @@ class LaneLines:
                 r = int(right_fitx[i])
                 y = int(y)
                 cv2.line(out_img, (l, y), (r, y), (0, 255, 0))
-                print(out_img.shape)
+                # print(out_img.shape)
 
             # drawing the middle line of lane
             for i in range(len(ploty)-1):
@@ -314,7 +338,7 @@ class LaneLines:
     def plot(self, out_img):
         np.set_printoptions(precision=6, suppress=True)
         # lR, rR, pos = self.measure_curvature()
-        error = self.error()
+        error = self.error(out_img)
 
         W = 600
         H = 50
@@ -337,13 +361,14 @@ class LaneLines:
 
         return out_img
 
-    def error(self):
+    def error(self, out_img):
         # lane width = 3m
         xm = 3/(self.rightx_base - self.leftx_base)
 
         xl = np.copy(self.leftx_base)
         xr = np.copy(self.rightx_base)
-        er = (1920//2 - (xl+xr)//2)*xm
+
+        er = (out_img.shape[1]//2 - (xl+xr)//2)*xm
         return er
         
 
@@ -365,12 +390,14 @@ class FindLaneLines:
         # img = self.calibration.undistort(img)
         img = self.transform.forward(img)
         img = self.thresholding.forward(img)
+        cv2.namedWindow('thresholding', cv2.WINDOW_NORMAL)
+        cv2.imshow('thresholding', img)
         img = self.lanelines.forward(img)
         img = self.transform.backward(img)
 
         out_img = cv2.addWeighted(out_img, 1, img, 0.6, 0)
         out_img = self.lanelines.plot(out_img)
-        error = self.lanelines.error()
+        error = self.lanelines.error(out_img)
         return error, out_img
 
     def process_input_frame(self, input_frame):
@@ -382,22 +409,22 @@ class FindLaneLines:
 
 if __name__ == "__main__":
 
-    video = 'input_videos/new_road3.mp4'
-    cap = cv2.VideoCapture(video)
+    video = 'input_videos/test_vid1.mp4'
+    cap = cv2.VideoCapture(3)
     
     app = FindLaneLines()
 
     count = 0
     while cap.isOpened():
         ret, frame = cap.read()
+        # print(frame.shape)
         if ret:
             count+=1
-
             if count%3 == 0:
                 error, out_img = app.process_input_frame(frame)
                 print(error)
 
                 cv2.namedWindow("out", cv2.WINDOW_NORMAL)
                 cv2.imshow("out", out_img)
-                if cv2.waitKey(20) & 0xFF == ord('q'):
+                if cv2.waitKey(1) & 0xFF == ord('q'):
                     break

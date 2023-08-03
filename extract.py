@@ -3,7 +3,7 @@ import cv2
 import os
 
 # Read the video from specified path
-path = "new_road3.mp4"
+path = "test_vid2.mp4"
 cam = cv2.VideoCapture("input_videos/" + path)
 dir = path.strip('.mp4') + '_frames'
 
