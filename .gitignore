@@ -1,9 +1,9 @@
 __pycache__/
-input_videos/
-test_vid1_frames/
-test_vid2_frames/
-output_videos/mid_lines_juniors.mp4
-output_videos/ymin_out.mp4
-output_videos/out_new2.mp4
-output_videos/new_road_out.mp4
-output_videos/fullplot_juniors.mp4
+lane-detection-opencv/input_videos/
+lane-detection-opencv/test_vid1_frames/
+lane-detection-opencv/test_vid2_frames/
+lane-detection-opencv/output_videos/mid_lines_juniors.mp4
+lane-detection-opencv/output_videos/ymin_out.mp4
+lane-detection-opencv/output_videos/out_new2.mp4
+lane-detection-opencv/output_videos/new_road_out.mp4
+lane-detection-opencv/output_videos/fullplot_juniors.mp4
